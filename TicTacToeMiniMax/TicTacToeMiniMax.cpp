@@ -255,14 +255,7 @@ int NextTurn()
 		CurrentPlayer = 1;
 	}
 
-	/*if (PlayerMarker == 'x')
-	{
-		PlayerMarker = 'o';
-	}
-	else
-	{
-		PlayerMarker = 'x';
-	}*/
+	
 
 	return CurrentPlayer;
 }
