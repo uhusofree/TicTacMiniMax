@@ -14,15 +14,14 @@ struct Move
 {
 	int row, col;
 };
+
 void DrawBoard();
 void PlayGame();
 void HumanMove();
-void ValidInput(int YourMove, int& tries, int& retflag);
 void DisplayResults(int whoWon, int tries, int& retflag);
 bool PlaceMarker(int slot);
 
 int AiMove(char Board[3][3]);
-int NextTurn();
 int CheckForWin(char Board[3][3]);
 int Minimax(char Board[3][3], int depth, bool isMaximizing);
 
@@ -42,11 +41,9 @@ int main()
 
 void PlayGame()
 {
-	CurrentPlayer = 1;
 	int YourMove = NULL;
 	int whoWon = NULL;
 	int tries = NULL;
-	char playerOneMarker = NULL;
 
 	while (true)
 	{
@@ -72,31 +69,23 @@ void PlayGame()
 	{
 		AiMove(Board);
 	}
-	/*PlayerMarker = human;*/
+
 	DrawBoard();
 	do
 	{
 		tries++;
 		HumanMove();
-		/*cout << "Your Move Player " << CurrentPlayer << ": ";
-		cin >> YourMove;*/
 
 		int retflag;
 
-		/*ValidInput(YourMove, tries, retflag);
-		if (retflag == 3) continue;*/
-
 		DrawBoard();
 		whoWon = CheckForWin(Board);
-
+	
 		DisplayResults(whoWon, tries, retflag);
 		if (retflag == 2) break;
 
-		/*NextTurn();*/
 		AiMove(Board);
-		/*Move readOut ;
-		int debugInfo = Board[readOut.row][readOut.col];
-		cout << "\nthe best move " << debugInfo << endl;*/
+		
 		DrawBoard();
 
 	} while (tries < 9);
@@ -165,28 +154,10 @@ bool PlaceMarker(int slot)
 	}
 }
 
-void ValidInput(int YourMove, int& tries, int& retflag)
-{
-	retflag = 1;
-	if (YourMove > 9 || YourMove < 0)
-	{
-		cout << "\nInvalid Input! Try again\n";
-		tries--;
-		{ retflag = 3; return; };
-	}
-
-	if (!PlaceMarker(YourMove))
-	{
-		cout << "\nCan't play here! Try again\n";
-		tries--;
-		{ retflag = 3; return; };
-	}
-}
-
 void DisplayResults(int whoWon, int tries, int& retflag)
 {
 	retflag = 1;
-	if (whoWon == 10)
+	if (whoWon == +10)
 	{
 		cout << "\nPlayer One won" << endl;
 		{ retflag = 2; return; };
@@ -212,7 +183,6 @@ int CheckForWin(char Board[3][3])
 			{
 				return -10;
 			}
-			/*return CurrentPlayer;*/
 		}
 
 	}
@@ -229,11 +199,8 @@ int CheckForWin(char Board[3][3])
 			{
 				return -10;
 			}
-			/*return CurrentPlayer;*/
 		}
 	}
-
-
 
 	if (Board[0][2] == Board[1][1] && Board[1][1] == Board[2][2])
 	{
@@ -245,8 +212,8 @@ int CheckForWin(char Board[3][3])
 		{
 			return -10;
 		}
-		/*return CurrentPlayer;*/
 	}
+
 	if (Board[2][0] == Board[1][1] && Board[1][1] == Board[0][2])
 	{
 		if (Board[2][0] == human)
@@ -257,34 +224,9 @@ int CheckForWin(char Board[3][3])
 		{
 			return -10;
 		}
-		/*return CurrentPlayer;*/
 	}
 
 	return 0;
-}
-
-int NextTurn()
-{
-	if (CurrentPlayer == 1)
-	{
-		CurrentPlayer = 2;
-	}
-
-	else
-	{
-		CurrentPlayer = 1;
-	}
-
-	if (PlayerMarker == human)
-	{
-		PlayerMarker = artificial;
-	}
-	else
-	{
-		PlayerMarker = human;
-	}
-
-	return CurrentPlayer;
 }
 
 bool isSpotsLeft(char Board[3][3])
@@ -319,7 +261,7 @@ int AiMove(char Board[3][3])
 				Board[i][j] = human;
 				int score = Minimax(Board, 0, false);
 				Board[i][j] = ' ';
-				/*bestScore = min(score, bestScore);*/
+				
 				if (score > bestScore)
 				{
 					bestMove.row = i;
@@ -329,15 +271,10 @@ int AiMove(char Board[3][3])
 			}
 		}
 	}
+
+	cout << "\nArtie has made a move\n";
 	return Board[bestMove.row][bestMove.col] = artificial;
 
-	/*time_t seconds;
-	time(&seconds);
-	srand((unsigned int)seconds);
-
-	int YourMove = (rand() % 9) + 1;
-
-	return YourMove;*/
 }
 int Minimax(char Board[3][3], int depth, bool isMaximizing)
 {
