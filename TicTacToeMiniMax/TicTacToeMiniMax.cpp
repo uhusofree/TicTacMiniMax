@@ -44,7 +44,10 @@ void PlayGame()
 	int YourMove = NULL;
 	int whoWon = NULL;
 
-	/*introduction to game*/
+	cout << "--------------------------------\n";
+	cout << "Welcome to Tic Tac Toe with Artie:\n";
+	cout << "the open slots are in numerical order (1-9)\n";
+	cout << "--------------------------------\n\n";
 
 	while (true)
 	{
@@ -320,8 +323,8 @@ int Minimax(char Board[3][3], int depth, bool isMaximizing)
 			{
 				if (Board[i][j] == ' ')
 				{
-					Board[i][j] = artificial;
-					int score = Minimax(Board, depth + 1, false);
+					Board[i][j] = human;
+					int score = Minimax(Board, depth + 1, true);
 					Board[i][j] = ' ';
 					bestScore = max(score, bestScore);
 
@@ -340,8 +343,8 @@ int Minimax(char Board[3][3], int depth, bool isMaximizing)
 			{
 				if (Board[i][j] == ' ')
 				{
-					Board[i][j] = human;
-					int score = Minimax(Board, depth + 1, true);
+					Board[i][j] = artificial;
+					int score = Minimax(Board, depth + 1, false);
 					Board[i][j] = ' ';
 					bestScore = min(score, bestScore);
 
