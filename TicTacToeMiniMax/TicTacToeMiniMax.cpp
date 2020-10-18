@@ -35,6 +35,7 @@ int CurrentPlayer;
 
 int main()
 {
+
 	PlayGame();
 }
 
@@ -49,7 +50,7 @@ void PlayGame()
 	cout << "the open slots are in numerical order (1-9)\n";
 	cout << "--------------------------------\n\n";
 
-	while (true)
+	/*while (true)
 	{
 		cout << "Choose X or O: X goes first: ";
 		cin >> human;
@@ -67,16 +68,22 @@ void PlayGame()
 	else
 	{
 		artificial = 'x';
-	}
+	}*/
 
-	if (human == 'o')
+	/*if (human == 'o')
 	{
 		AiMove(Board);
-	}
+	}*/
 
+	human = 'o';
+	artificial = 'x';
 	DrawBoard();
 	do
-	{	int retflag;
+	{
+		AiMove(Board);
+		DrawBoard();
+
+		int retflag;
 		whoWon = CheckForWin(Board); /*fix check for win : and display results*/
 		DisplayResults(whoWon, retflag);
 		if (retflag == 2) break;
@@ -84,10 +91,9 @@ void PlayGame()
 		HumanMove();
 		DrawBoard();
 
-		AiMove(Board);
-		DrawBoard();
 
-	} while (isSpotsLeft(Board) == true);
+
+	} while (isSpotsLeft(Board) != false);
 }
 
 void DrawBoard()
@@ -117,9 +123,13 @@ void HumanMove()
 		col = (slot % 3) - 1;
 	}
 
-	if (Board[row][col] != 'x' && Board[row][col] != 'o')
+	if (Board[row][col] != artificial && Board[row][col] != human)
 	{
 		Board[row][col] = human;
+	}
+	else
+	{
+		cout << "Invalid Entry:\n";
 	}
 
 }
@@ -151,9 +161,9 @@ bool PlaceMarker(int slot)
 void DisplayResults(int whoWon, int& retflag)
 {
 	retflag = 1;
-	if (whoWon == +10)
+	if (CheckForWin(Board) == +10)
 	{
-		if (human == 'x')
+		/*if (human == 'x')
 		{
 			cout << "\nThe human won" << endl;
 			{ retflag = 2; return; };
@@ -162,12 +172,14 @@ void DisplayResults(int whoWon, int& retflag)
 		{
 			cout << "\nArtie won" << endl;
 			{ retflag = 2; return; };
-		}
+		}*/
 
+		cout << "\nArtie won" << endl;
+		{ retflag = 2; return; };
 	}
-	if (whoWon == -10)
+	if (CheckForWin(Board) == -10)
 	{
-		if (artificial == 'o')
+		/*if (artificial == 'o')
 		{
 			cout << "\nArtie won" << endl;
 			{ retflag = 2; return; };
@@ -176,7 +188,10 @@ void DisplayResults(int whoWon, int& retflag)
 		{
 			cout << "\nThe human won" << endl;
 			{ retflag = 2; return; };
-		}
+		}*/
+		cout << "\nHuman won" << endl;
+		{ retflag = 2; return; };
+
 	}
 
 	if (isSpotsLeft(Board) == false)
@@ -193,11 +208,11 @@ int CheckForWin(char Board[3][3])
 		/*Horizontal win*/
 		if (Board[i][0] == Board[i][1] && Board[i][1] == Board[i][2])
 		{
-			if (Board[i][0] == 'x' /*artificial*/)
+			if (Board[i][0] == artificial)
 			{
 				return +10;
 			}
-			else if (Board[i][0] == 'o' /*human*/)
+			else if (Board[i][0] == human)
 			{
 				return -10;
 			}
@@ -209,24 +224,24 @@ int CheckForWin(char Board[3][3])
 	{
 		if (Board[0][i] == Board[1][i] && Board[1][i] == Board[2][i])
 		{
-			if (Board[0][i] == 'x')
+			if (Board[0][i] == artificial)
 			{
 				return +10;
 			}
-			else if (Board[0][i] == 'o')
+			else if (Board[0][i] == human)
 			{
 				return -10;
 			}
 		}
 	}
 	/*Diagonal win*/
-	if (Board[0][2] == Board[1][1] && Board[1][1] == Board[2][2])
+	if (Board[0][0] == Board[1][1] && Board[1][1] == Board[2][2])
 	{
-		if (Board[0][2] == 'x')
+		if (Board[0][0] == artificial)
 		{
 			return +10;
 		}
-		else if (Board[0][2] == 'o')
+		else if (Board[0][0] == human)
 		{
 			return -10;
 		}
@@ -234,11 +249,11 @@ int CheckForWin(char Board[3][3])
 
 	if (Board[2][0] == Board[1][1] && Board[1][1] == Board[0][2])
 	{
-		if (Board[2][0] == 'x')
+		if (Board[2][0] == artificial)
 		{
 			return +10;
 		}
-		else if (Board[2][0] == 'o')
+		else if (Board[2][0] == human)
 		{
 			return -10;
 		}
@@ -276,7 +291,7 @@ int AiMove(char Board[3][3])
 		{
 			if (Board[i][j] == ' ')
 			{
-				Board[i][j] = human; /*maximizing changes depending on who goes first*/
+				Board[i][j] = artificial;
 				int score = Minimax(Board, 0, false);
 				Board[i][j] = ' ';
 
@@ -285,12 +300,14 @@ int AiMove(char Board[3][3])
 					bestMove.row = i;
 					bestMove.col = j;
 					bestScore = score;
+
 				}
 			}
 		}
 	}
 
 	cout << "\nArtie has made a move\n";
+	cout << endl;
 	return Board[bestMove.row][bestMove.col] = artificial;
 }
 int Minimax(char Board[3][3], int depth, bool isMaximizing)
@@ -308,10 +325,14 @@ int Minimax(char Board[3][3], int depth, bool isMaximizing)
 		return score;
 	}
 
-	if (isSpotsLeft(Board) == false)
+	if (!isSpotsLeft(Board))
 	{
 		return 0;
 	}
+	/*if (score == 0)
+	{
+		return score;
+	}*/
 
 
 	if (isMaximizing)
@@ -323,10 +344,11 @@ int Minimax(char Board[3][3], int depth, bool isMaximizing)
 			{
 				if (Board[i][j] == ' ')
 				{
-					Board[i][j] = human;
-					int score = Minimax(Board, depth + 1, true);
-					Board[i][j] = ' ';
+					Board[i][j] = artificial;
+					int score = Minimax(Board, depth + 1, false);
 					bestScore = max(score, bestScore);
+					Board[i][j] = ' ';
+
 
 				}
 			}
@@ -343,10 +365,11 @@ int Minimax(char Board[3][3], int depth, bool isMaximizing)
 			{
 				if (Board[i][j] == ' ')
 				{
-					Board[i][j] = artificial;
-					int score = Minimax(Board, depth + 1, false);
-					Board[i][j] = ' ';
+					Board[i][j] = human;
+					int score = Minimax(Board, depth + 1, true);
 					bestScore = min(score, bestScore);
+					Board[i][j] = ' ';
+
 
 				}
 			}
