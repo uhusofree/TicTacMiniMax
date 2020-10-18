@@ -19,36 +19,43 @@ void DrawBoard();
 void PlayGame();
 void HumanMove();
 void DisplayResults(int whoWon, int& retflag);
+void ClearBoard();
+
+bool GameOver(int whoWon);
 bool PlaceMarker(int slot);
 bool isSpotsLeft(char Board[3][3]);
+bool PlayAgain();
 int AiMove(char Board[3][3]);
 int CheckForWin(char Board[3][3]);
 int Minimax(char Board[3][3], int depth, bool isMaximizing);
 
 char Board[3][3] = { {' ', ' ', ' '},{' ',' ',' '},{' ',' ',' '} };
 char PlayerMarker;
-char human;
-char artificial;
+const char human = 'o';
+const char artificial = 'x';
 
-int CurrentPlayer;
+
 
 
 int main()
 {
-
-	PlayGame();
+	do
+	{
+		PlayGame();
+	} while (PlayAgain());
+	
 }
 
 
 void PlayGame()
 {
-	int YourMove = NULL;
+	ClearBoard();
 	int whoWon = NULL;
-
-	cout << "--------------------------------\n";
-	cout << "Welcome to Tic Tac Toe with Artie:\n";
+	
+	cout << "\n\n   --------------------------------\n";
+	cout << "   Welcome to Tic Tac Toe with Artie:\n";
 	cout << "the open slots are in numerical order (1-9)\n";
-	cout << "--------------------------------\n\n";
+	cout << "   --------------------------------\n\n";
 
 	/*while (true)
 	{
@@ -74,12 +81,11 @@ void PlayGame()
 	{
 		AiMove(Board);
 	}*/
-
-	human = 'o';
-	artificial = 'x';
+	
 	DrawBoard();
 	do
 	{
+		
 		AiMove(Board);
 		DrawBoard();
 
@@ -91,9 +97,7 @@ void PlayGame()
 		HumanMove();
 		DrawBoard();
 
-
-
-	} while (isSpotsLeft(Board) != false);
+	} while (!GameOver(whoWon)/*isSpotsLeft(Board) != false*/);
 }
 
 void DrawBoard()
@@ -278,6 +282,34 @@ bool isSpotsLeft(char Board[3][3])
 	return false;
 }
 
+bool PlayAgain()
+{
+	const int IGNORE_CHARS = 256;
+	char answer = 'y';
+	bool failure;
+	do
+	{
+		failure = false;
+		cout << "\nWould like to challenge Artie again: (y/n) ";
+		cin >> answer;
+
+		if (cin.fail())
+		{
+			cin.clear();
+			cin.ignore(IGNORE_CHARS, '\n');
+			cout << "Invalid input ";
+			failure = true;
+		}
+		else
+		{
+			cin.ignore(IGNORE_CHARS, '\n');
+			answer = tolower(answer);
+		}
+	} while (failure);
+	
+	return answer == 'y';
+}
+
 int AiMove(char Board[3][3])
 {
 	int bestScore = -1000;
@@ -378,3 +410,17 @@ int Minimax(char Board[3][3], int depth, bool isMaximizing)
 	}
 }
 
+void ClearBoard()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			Board[i][j] = ' ';
+		}
+	}
+}
+bool GameOver(int whoWon)
+{
+	return whoWon == +10 || whoWon == -10 || isSpotsLeft(Board)== false;
+}
